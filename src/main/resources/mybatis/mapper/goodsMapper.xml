@@ -10,6 +10,7 @@
         <result column="goods_pic" property="picture" jdbcType="VARCHAR"></result>
         <result column="goods_num" property="goods_num" jdbcType="INTEGER"></result>
         <result column="goods_browse" property="goods_browse" jdbcType="INTEGER"></result>
+        <result column="mall_id" property="mallID" jdbcType="INTEGER"></result>
     </resultMap>
 
     <sql id="Goods_Column_List" >
@@ -17,7 +18,7 @@
     </sql>
 
     <insert id="insertList" parameterType="java.util.List">
-        insert into goods
+        insert into ignore goods
         (<include refid="Goods_Column_List"></include>)
         values
         <foreach collection="list" item="item" index="index" separator=",">
@@ -28,6 +29,7 @@
             #{item.picture},
             #{item.goods_num},
             #{item.goods_browse}
+            #{item.mallID}
         )
         </foreach>
     </insert>

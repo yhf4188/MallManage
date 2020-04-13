@@ -61,7 +61,7 @@ public class GoodsService {
                 System.out.println(data.get(key));
                 JSONObject goodJ=data.getJSONObject(key);
                 Goods good=new Goods(goodJ.getInteger("id"),goodJ.getString("name"),goodJ.getInteger("points"),goodJ.getString("picture")
-                ,goodJ.getInteger("goods_num"),goodJ.getInteger("goods_browse"));
+                ,goodJ.getInteger("goods_num"),0);
                 goods.add(good);
             }
             boolean in_su = goodsDao.insertList(goods);
