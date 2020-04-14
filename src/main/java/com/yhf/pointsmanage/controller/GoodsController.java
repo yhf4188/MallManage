@@ -6,10 +6,8 @@ import com.yhf.pointsmanage.service.GoodsService;
 import com.yhf.pointsmanage.tools.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +32,9 @@ public class GoodsController {
      * 将所有的商品数据存入数据库
      * @return
      */
-    @GetMapping("/insertList")
+
+    //定时在每天零点导入一次商品
+    @Scheduled(cron = "0 0 0 1/1 * ? *")
     public Message insertList() {
         Message message = new Message();
         int result = goodsService.setGoods();
@@ -53,11 +53,11 @@ public class GoodsController {
      * @return
      */
     @PostMapping("/getAllGoods")
-    public Message getAllGoods() {
+    public Message getAllGoods(@RequestParam("userName") String userName) {
         try {
             Message message = new Message();
             List<Goods> goods = new ArrayList<>();
-            goods = goodsService.getAllGoods();
+            goods = goodsService.getAllGoods(userName);
             Map<String, Object> map = new HashMap<>();
             map.put("goods",goods);
             message.getData().putAll(map);

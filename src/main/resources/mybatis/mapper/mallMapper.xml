@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhf.pointsmanage.dao.MallDao">
+
+    <resultMap id="mallMap" type="com.yhf.pointsmanage.entity.Mall">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="props" column="props" jdbcType="VARCHAR"/>
+        <result property="shop_impl" column="shopimpl_add" jdbcType="VARCHAR"/>
+        <result property="consume_impl" column="consumeimpl_add" jdbcType="VARCHAR"/>
+        <result property="logistics_impl" column="logisticsimpl_add" jdbcType="VARCHAR"/>
+        <result property="order_impl" column="orderimpl_add" jdbcType="VARCHAR"/>
+        <result property="points_impl" column="pointsimpl_add" jdbcType="VARCHAR"/>
+        <result property="attribution_impl" column="attributionimpl_add" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 根据用户名查找用户对应的商品链接  -->
+    <select id="getMallImpl" parameterType="java.util.Map">
+        SELECT * FROM bind a WHERE EXISTS(
+        SELECT 1 FROM user_mall b WHERE a.id=b.bind_id AND EXISTS (
+        SELECT 1 FROM userinfo c WHERE b.user_id=c.id AND c.user_name=#{userName}
+        )
+		)
+    </select>
+
+    <!-- 查询所有商城接口 -->
+    <select id="getAllMall" parameterType="java.util.List">
+        SELECT * FROM bind
+    </select>
+</mapper>

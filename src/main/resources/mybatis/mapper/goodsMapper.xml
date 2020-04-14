@@ -4,33 +4,38 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yhf.pointsmanage.dao.GoodsDao">
     <resultMap id="GoodsResultMap" type="com.yhf.pointsmanage.entity.Goods">
-        <result column="id" property="id" jdbcType="INTEGER"></result>
+        <id column="id" property="id" jdbcType="INTEGER"></id>
         <result column="goods_name" property="name" jdbcType="VARCHAR"></result>
         <result column="goods_points" property="points" jdbcType="INTEGER"></result>
         <result column="goods_pic" property="picture" jdbcType="VARCHAR"></result>
         <result column="goods_num" property="goods_num" jdbcType="INTEGER"></result>
         <result column="goods_browse" property="goods_browse" jdbcType="INTEGER"></result>
         <result column="mall_id" property="mallID" jdbcType="INTEGER"></result>
+        <result column="im_mall_id" property="inMallID" jdbcType="VARCHAR"></result>
     </resultMap>
 
     <sql id="Goods_Column_List" >
-        id,goods_name,goods_points,goods_pic,goods_num,goods_browse
+        goods_name,goods_points,goods_pic,goods_num,goods_browse,mall_id,in_mall_id
     </sql>
 
     <insert id="insertList" parameterType="java.util.List">
-        insert into ignore goods
+        insert into goods
         (<include refid="Goods_Column_List"></include>)
         values
         <foreach collection="list" item="item" index="index" separator=",">
         (
-            #{item.id},
             #{item.name},
             #{item.points},
             #{item.picture},
             #{item.goods_num},
             #{item.goods_browse}
             #{item.mallID}
+            #{item.inMallID}
         )
         </foreach>
     </insert>
+
+    <select id="getInMallID" parameterType="java.util.List">
+        SELECT in_mall_id FROM goods
+    </select>
 </mapper>

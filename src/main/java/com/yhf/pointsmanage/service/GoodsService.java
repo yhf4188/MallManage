@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yhf.pointsmanage.dao.GoodsDao;
+import com.yhf.pointsmanage.dao.MallDao;
 import com.yhf.pointsmanage.entity.Goods;
+import com.yhf.pointsmanage.entity.Mall;
+import com.yhf.pointsmanage.tools.JsonData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -29,47 +32,42 @@ public class GoodsService {
     @Autowired
     private GoodsDao goodsDao;
 
-    public int setGoods(){
-        HttpClient client = HttpClients.createDefault();
-        // 要调用的接口方法
-        String url = "http://localhost:8081/pointsGoods/getAll";
-        HttpPost post = new HttpPost(url);
-        JSONObject jsonObject = null;
-        JSONObject date = new JSONObject();
+    @Autowired
+    private MallDao mallDao;
+
+    public int setGoods() {
+        List<Mall> malls = new ArrayList<>();
+        malls = mallDao.geAllMall();
+        Map<String,String> inMallID = new HashMap<>();
+        inMallID = mallDao.getInMallID();
+        List<Goods> goods = new ArrayList<>();
         try {
-            StringEntity s = new StringEntity(date.toString());
-            s.setContentEncoding("UTF-8");
-            s.setContentType("application/json");
-            post.setEntity(s);
-            post.addHeader("content-type", "text/xml");
-            HttpResponse res = client.execute(post);
-            if (res.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                String result = EntityUtils.toString(res.getEntity());// 返回json格式：
-                jsonObject = JSONObject.parseObject(result);
-            }
-            JSONObject data = new JSONObject();
-            //获取Json中data部分数据
-            JSONObject goodsJson=jsonObject.getJSONObject("data");
-            Iterator it = goodsJson.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, Object> entry = (Map.Entry<String, Object>) it.next();
-                data.put(entry.getKey(), entry.getValue());
-            }
-            List<Goods> goods = new ArrayList<>();
-            //将data中数据转存到List中
-            for (String key : data.keySet()) {
-                System.out.println(data.get(key));
-                JSONObject goodJ=data.getJSONObject(key);
-                Goods good=new Goods(goodJ.getInteger("id"),goodJ.getString("name"),goodJ.getInteger("points"),goodJ.getString("picture")
-                ,goodJ.getInteger("goods_num"),0);
-                goods.add(good);
+            //分商城导入商品数据
+            for (Mall mall : malls) {
+                String url = mall.getShop_impl();
+                JSONObject goodsJson= JsonData.getJson(url);
+                JSONObject data = new JSONObject();
+                Iterator it = goodsJson.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry<String, Object> entry = (Map.Entry<String, Object>) it.next();
+                    data.put(entry.getKey(), entry.getValue());
+                }
+                //将data中数据转存到List中
+                for (String key : data.keySet()) {
+                    System.out.println(data.get(key));
+                    JSONObject goodJ = data.getJSONObject(key);
+                    String inMallId= goodJ.getString("name") + goodJ.getInteger("id");
+                    if(!inMallID.containsKey(inMallId)) {
+                        Goods good = new Goods(goodJ.getString("name"), goodJ.getInteger("points"), goodJ.getString("picture")
+                                , goodJ.getInteger("goods_num"), 0, inMallId);
+                        goods.add(good);
+                    }
+                }
             }
             boolean in_su = goodsDao.insertList(goods);
-            if(in_su)
-            {
+            if (in_su) {
                 return Constant.SUCCESS;
-            }
-            else
+            } else
                 return Constant.FAILURE;
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -77,40 +75,29 @@ public class GoodsService {
         }
     }
 
-    public List<Goods> getAllGoods()
-    {
-        HttpClient client = HttpClients.createDefault();
-        String url = "http://localhost:8081/pointsGoods/getAll";
-        HttpPost post = new HttpPost(url);
-        JSONObject jsonObject = null;
-        JSONObject date = new JSONObject();
+    public List<Goods> getAllGoods(String userName) {
+        List<Mall> malls = new ArrayList<>();
+        malls = mallDao.getMallIpml(userName);
+        List<Goods> goods = new ArrayList<>();
         try {
-            StringEntity s = new StringEntity(date.toString());
-            s.setContentEncoding("UTF-8");
-            s.setContentType("application/json");
-            post.setEntity(s);
-            post.addHeader("content-type", "text/xml");
-            HttpResponse res = client.execute(post);
-            if (res.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                String result = EntityUtils.toString(res.getEntity());// 返回json格式：
-                jsonObject = JSONObject.parseObject(result);
+            for (Mall mall : malls) {
+                String url = mall.getShop_impl();
+                JSONObject goodsJson= JsonData.getJson(url);
+                JSONObject data = new JSONObject();
+                Iterator it = goodsJson.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry<String, Object> entry = (Map.Entry<String, Object>) it.next();
+                    data.put(entry.getKey(), entry.getValue());
+                }
+                for (String key : data.keySet()) {
+                    System.out.println(data.get(key));
+                    JSONObject goodJ = data.getJSONObject(key);
+                    Goods good = new Goods(goodJ.getString("name"), goodJ.getInteger("points"), goodJ.getString("picture")
+                            , goodJ.getInteger("goods_num"), 0, goodJ.getString("name") + goodJ.getInteger("id"));
+                    goods.add(good);
+                }
             }
-            JSONObject data = new JSONObject();
-            JSONObject goodsJson=jsonObject.getJSONObject("data");
-            Iterator it = goodsJson.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, Object> entry = (Map.Entry<String, Object>) it.next();
-                data.put(entry.getKey(), entry.getValue());
-            }
-            List<Goods> goods = new ArrayList<>();
-            for (String key : data.keySet()) {
-                System.out.println(data.get(key));
-                JSONObject goodJ=data.getJSONObject(key);
-                Goods good=new Goods(goodJ.getInteger("id"),goodJ.getString("name"),goodJ.getInteger("points"),goodJ.getString("picture")
-                        ,goodJ.getInteger("goods_num"),goodJ.getInteger("goods_browse"));
-                goods.add(good);
-            }
-           return goods;
+            return goods;
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
