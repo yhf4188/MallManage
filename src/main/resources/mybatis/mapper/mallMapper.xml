@@ -7,7 +7,6 @@
     <resultMap id="mallMap" type="com.yhf.pointsmanage.entity.Mall">
         <id property="id" column="id" jdbcType="INTEGER"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
-        <result property="props" column="props" jdbcType="VARCHAR"/>
         <result property="shop_impl" column="shopimpl_add" jdbcType="VARCHAR"/>
         <result property="consume_impl" column="consumeimpl_add" jdbcType="VARCHAR"/>
         <result property="logistics_impl" column="logisticsimpl_add" jdbcType="VARCHAR"/>

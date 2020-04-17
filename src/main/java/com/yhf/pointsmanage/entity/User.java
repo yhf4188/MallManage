@@ -16,6 +16,13 @@ public class User {
     public User() {
     }
 
+    public User(String userName, String password, String phone, String userType) {
+        this.userName = userName;
+        this.password = password;
+        this.phone = phone;
+        this.userType = userType;
+    }
+
     public User(int id, String userName, String password, List<Mall> bindMall, String phone, String userType) {
         this.id = id;
         this.userName = userName;

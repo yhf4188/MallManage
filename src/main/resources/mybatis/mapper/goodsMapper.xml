@@ -10,12 +10,13 @@
         <result column="goods_pic" property="picture" jdbcType="VARCHAR"></result>
         <result column="goods_num" property="goods_num" jdbcType="INTEGER"></result>
         <result column="goods_browse" property="goods_browse" jdbcType="INTEGER"></result>
+        <result column="goods_classf" property="goods_classf" jdbcType="INTEGER"></result>
         <result column="mall_id" property="mallID" jdbcType="INTEGER"></result>
         <result column="im_mall_id" property="inMallID" jdbcType="VARCHAR"></result>
     </resultMap>
 
     <sql id="Goods_Column_List" >
-        goods_name,goods_points,goods_pic,goods_num,goods_browse,mall_id,in_mall_id
+        goods_name,goods_points,goods_pic,goods_num,goods_browse,mall_id,goods_classf,in_mall_id
     </sql>
 
     <insert id="insertList" parameterType="java.util.List">
@@ -30,6 +31,7 @@
             #{item.goods_num},
             #{item.goods_browse}
             #{item.mallID}
+            #{item.goods_classf}
             #{item.inMallID}
         )
         </foreach>

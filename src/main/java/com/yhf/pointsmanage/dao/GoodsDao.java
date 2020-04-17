@@ -10,4 +10,6 @@ import java.util.List;
 @Mapper
 public interface GoodsDao {
     boolean insertList(List<Goods> goods);
+    List<String> getInMallID();
+
 }

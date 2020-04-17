@@ -59,7 +59,7 @@ public class GoodsService {
                     String inMallId= goodJ.getString("name") + goodJ.getInteger("id");
                     if(!inMallID.containsKey(inMallId)) {
                         Goods good = new Goods(goodJ.getString("name"), goodJ.getInteger("points"), goodJ.getString("picture")
-                                , goodJ.getInteger("goods_num"), 0, inMallId);
+                                , goodJ.getInteger("goods_num"), 0,goodJ.getInteger("goods_classf") ,inMallId);
                         goods.add(good);
                     }
                 }
@@ -93,7 +93,7 @@ public class GoodsService {
                     System.out.println(data.get(key));
                     JSONObject goodJ = data.getJSONObject(key);
                     Goods good = new Goods(goodJ.getString("name"), goodJ.getInteger("points"), goodJ.getString("picture")
-                            , goodJ.getInteger("goods_num"), 0, goodJ.getString("name") + goodJ.getInteger("id"));
+                            , goodJ.getInteger("goods_num"), 0,goodJ.getInteger("goods_classf"), goodJ.getString("name") + goodJ.getInteger("id"));
                     goods.add(good);
                 }
             }

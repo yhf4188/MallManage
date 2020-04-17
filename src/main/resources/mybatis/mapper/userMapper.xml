@@ -13,7 +13,6 @@
         <collection property="bindMall" ofType="com.yhf.pointsmanage.entity.Mall">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="props" column="props" jdbcType="VARCHAR"/>
             <result property="shop_impl" column="shopimpl_add" jdbcType="VARCHAR"/>
             <result property="consume_impl" column="consumeimpl_add" jdbcType="VARCHAR"/>
             <result property="logistics_impl" column="logisticsimpl_add" jdbcType="VARCHAR"/>
@@ -27,8 +26,20 @@
         id,user_name,password,user_type,phone
     </sql>
 
+    <sql id="userBind">
+        user_name,points,user_id,bind_id
+    </sql>
     <!-- 登录 -->
     <select id="getUserMall" resultMap="userMapper">
+        SELECT * FROM `userinfo` u
+        LEFT JOIN `user_mall` u_m ON u.id=u_m.user_id
+        LEFT JOIN `bind` m ON u_m.bind_id=m.id
+        WHERE u.user_name = #{userName}
+        AND u.password = #{password}
+    </select>
+
+    <!--根据用户名获取信息-->
+    <select id="getUserMallByUserName" resultMap="userMapper">
         SELECT * FROM `userinfo` u
         INNER JOIN `user_mall` u_m ON u.id=u_m.user_id
         INNER JOIN `bind` m ON u_m.bind_id=m.id
@@ -37,15 +48,15 @@
     </select>
 
     <!-- 查询用户名是否被注册过 -->
-    <select id="haveUserName" resultType="java.lang.Boolean">
-        <![CDATA[SELECT * FROM `userinfo`
-        WHERE user_name = #{userName}]]>
+    <select id="haveUserName" resultType="java.lang.String">
+        SELECT * FROM `userinfo`
+        WHERE user_name = #{userName}
     </select>
 
     <!-- 查询手机是否被注册过 -->
-    <select id="havePhone" resultType="java.lang.Boolean">
-        <![CDATA[SELECT * FROM `userinfo`
-        WHERE phone = #{phone}]]>
+    <select id="havePhone" resultType="java.lang.String">
+       SELECT * FROM `userinfo`
+        WHERE phone = #{phone}
     </select>
 
     <!-- 注册 -->
@@ -64,4 +75,21 @@
         )
     </insert>
 
+    <insert id="setUserBind" parameterType="com.yhf.pointsmanage.entity.UserBindMall">
+        INSERT INTO user_mall
+        (user_id,bind_id,points,user_name)
+        VALUES (
+        #{userID},
+        #{mallID},
+        #{points},
+        #{userName}
+        )
+    </insert>
+
+    <select id="getUserBind" resultType="java.util.List">
+        SELECT
+        <include refid="userBind"></include>
+        FROM user_mall
+        WHERE user_id=#{userID}
+    </select>
 </mapper>

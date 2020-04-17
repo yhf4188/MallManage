@@ -34,7 +34,7 @@ public class GoodsController {
      */
 
     //定时在每天零点导入一次商品
-    @Scheduled(cron = "0 0 0 1/1 * ? *")
+//    @Scheduled(cron = "0 0 0 1/1 * ? *")
     public Message insertList() {
         Message message = new Message();
         int result = goodsService.setGoods();

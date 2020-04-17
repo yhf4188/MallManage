@@ -1,6 +1,8 @@
 package com.yhf.pointsmanage.dao;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.yhf.pointsmanage.entity.User;
+import com.yhf.pointsmanage.entity.UserBindMall;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,9 +12,15 @@ import java.util.List;
 public interface UserDao {
     User getUserMall(@Param("userName") String userName, @Param("password") String password);
 
-    Boolean haveUserName(@Param("userName") String userName);
+    String haveUserName(@Param("userName") String userName);
 
-    Boolean havePhone(@Param("phone") String phone);
+    String havePhone(@Param("phone") String phone);
 
     Boolean register(User user);
+
+    User getUserMallByUserName(@Param("userName") String userName);
+
+    Boolean setUserBind(UserBindMall userBindMall);
+
+    List<UserBindMall> getUserBind(@Param("userID") int userID);
 }
