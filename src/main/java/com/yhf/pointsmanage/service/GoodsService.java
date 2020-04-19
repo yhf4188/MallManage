@@ -37,7 +37,7 @@ public class GoodsService {
 
     public int setGoods() {
         List<Mall> malls = new ArrayList<>();
-        malls = mallDao.geAllMall();
+        malls = mallDao.getAllMall();
         Map<String,String> inMallID = new HashMap<>();
         inMallID = mallDao.getInMallID();
         List<Goods> goods = new ArrayList<>();

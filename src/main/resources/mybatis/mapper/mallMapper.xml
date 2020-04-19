@@ -16,7 +16,7 @@
     </resultMap>
 
     <!-- 根据用户名查找用户对应的商品链接  -->
-    <select id="getMallImpl" parameterType="java.util.Map">
+    <select id="getMallImpl" resultType="com.yhf.pointsmanage.entity.Mall">
         SELECT * FROM bind a WHERE EXISTS(
         SELECT 1 FROM user_mall b WHERE a.id=b.bind_id AND EXISTS (
         SELECT 1 FROM userinfo c WHERE b.user_id=c.id AND c.user_name=#{userName}
@@ -24,8 +24,8 @@
 		)
     </select>
 
-    <!-- 查询所有商城接口 -->
-    <select id="getAllMall" parameterType="java.util.List">
+    <!-- 查询所有商城 -->
+    <select id="getAllMall" resultType="com.yhf.pointsmanage.entity.Mall">
         SELECT * FROM bind
     </select>
 </mapper>
