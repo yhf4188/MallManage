@@ -3,6 +3,7 @@ package com.yhf.pointsmanage.service;
 import com.alibaba.fastjson.JSONObject;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.yhf.pointsmanage.dao.UserDao;
+import com.yhf.pointsmanage.entity.Attribute;
 import com.yhf.pointsmanage.entity.Mall;
 import com.yhf.pointsmanage.entity.User;
 import com.yhf.pointsmanage.entity.UserBindMall;
@@ -11,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -75,10 +73,14 @@ public class UserService {
     }
 
     //添加用户商城绑定信息
-    public boolean setUserBind(User user, Mall mall) throws IOException {
+    public boolean setUserBind(User user,Attribute attribute, Mall mall) throws IOException {
         try {
-            String att_url = mall.getAttribution_impl()+"?username="+user.getId()+"&password="+user.getPassword();
-            JSONObject attributionJson = JsonData.getJson(att_url);
+            String att_url = mall.getAttribution_impl();
+            Map<String,Object> map=new HashMap<>();
+            map.put("user",attribute);
+            JSONObject attributionJson = JsonData.getJson(att_url,map);
+            if(attributionJson.isEmpty())
+            {return false;}
             JSONObject data = new JSONObject();
             Iterator it = attributionJson.entrySet().iterator();
             while (it.hasNext()) {
@@ -86,7 +88,8 @@ public class UserService {
                 data.put(entry.getKey(), entry.getValue());
             }
             JSONObject attributionJ = data.getJSONObject("user");
-            UserBindMall userBindMall = new UserBindMall(user.getId(), mall.getId(), attributionJ.getString("username"), attributionJ.getInteger("points"));
+            UserBindMall userBindMall = new UserBindMall(user.getId(), mall.getId(), attributionJ.getString("username"), attributionJ.getInteger("points"),
+                    attributionJ.getString("password"),attributionJ.getString("email"),attributionJ.getString("phone"));
             userDao.setUserBind(userBindMall);
             return userDao.setUserBind(userBindMall);
         } catch (RuntimeException e) {

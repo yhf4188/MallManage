@@ -7,12 +7,12 @@
     <resultMap id="mallMap" type="com.yhf.pointsmanage.entity.Mall">
         <id property="id" column="id" jdbcType="INTEGER"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
-        <result property="shop_impl" column="shopimpl_add" jdbcType="VARCHAR"/>
-        <result property="consume_impl" column="consumeimpl_add" jdbcType="VARCHAR"/>
-        <result property="logistics_impl" column="logisticsimpl_add" jdbcType="VARCHAR"/>
-        <result property="order_impl" column="orderimpl_add" jdbcType="VARCHAR"/>
-        <result property="points_impl" column="pointsimpl_add" jdbcType="VARCHAR"/>
-        <result property="attribution_impl" column="attributionimpl_add" jdbcType="VARCHAR"/>
+        <result property="shop_impl" column="shopimpl_ad" jdbcType="VARCHAR"/>
+        <result property="consume_impl" column="consumeimpl_ad" jdbcType="VARCHAR"/>
+        <result property="logistics_impl" column="logisticsimpl_ad" jdbcType="VARCHAR"/>
+        <result property="order_impl" column="orderimpl_ad" jdbcType="VARCHAR"/>
+        <result property="points_impl" column="pointsimpl_ad" jdbcType="VARCHAR"/>
+        <result property="attribution_impl" column="attributionimpl_ad" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- 根据用户名查找用户对应的商品链接  -->
@@ -25,7 +25,7 @@
     </select>
 
     <!-- 查询所有商城 -->
-    <select id="getAllMall" resultType="com.yhf.pointsmanage.entity.Mall">
+    <select id="getAllMall" resultMap="mallMap">
         SELECT * FROM bind
     </select>
 </mapper>

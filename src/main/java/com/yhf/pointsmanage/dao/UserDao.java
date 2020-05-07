@@ -6,6 +6,7 @@ import com.yhf.pointsmanage.entity.UserBindMall;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Mapper
@@ -22,5 +23,5 @@ public interface UserDao {
 
     Boolean setUserBind(UserBindMall userBindMall);
 
-    List<UserBindMall> getUserBind(@Param("userID") int userID);
+    ArrayList<UserBindMall> getUserBind(@Param("userID") int userID);
 }

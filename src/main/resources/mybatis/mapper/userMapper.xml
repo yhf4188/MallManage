@@ -22,12 +22,22 @@
         </collection>
     </resultMap>
 
+    <resultMap id="userBind" type="com.yhf.pointsmanage.entity.UserBindMall">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="points" column="points" jdbcType="VARCHAR"/>
+        <result property="userID" column="user_id" jdbcType="VARCHAR"/>
+        <result property="mallID" column="bind_id" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+    </resultMap>
     <sql id="user">
         id,user_name,password,user_type,phone
     </sql>
 
     <sql id="userBind">
-        user_name,points,user_id,bind_id
+        id,user_name,points,user_id,bind_id,password,email,phone
     </sql>
     <!-- 登录 -->
     <select id="getUserMall" resultMap="userMapper">
@@ -77,18 +87,21 @@
 
     <insert id="setUserBind" parameterType="com.yhf.pointsmanage.entity.UserBindMall">
         INSERT INTO user_mall
-        (user_id,bind_id,points,user_name)
+        (user_id,bind_id,points,user_name,password,email,phone)
         VALUES (
         #{userID},
         #{mallID},
         #{points},
-        #{userName}
+        #{userName},
+        #{password},
+        #{email},
+        #{phone}
         )
     </insert>
 
-    <select id="getUserBind" resultType="java.util.List">
+    <select id="getUserBind" resultMap="userBind">
         SELECT
-        <include refid="userBind"></include>
+        *
         FROM user_mall
         WHERE user_id=#{userID}
     </select>

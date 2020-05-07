@@ -73,7 +73,12 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.29</version>
         </dependency>
-
+        <!--springboot程序测试依赖，如果是自动创建项目默认添加-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -90,6 +95,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.alipay.sdk/alipay-sdk-java -->
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>4.9.124.ALL</version>
         </dependency>
     </dependencies>
 

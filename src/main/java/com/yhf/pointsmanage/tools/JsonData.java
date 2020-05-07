@@ -10,6 +10,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JsonData {
     public static JSONObject getJson(String url) throws IOException
@@ -31,6 +33,29 @@ public class JsonData {
         }
         //获取Json中data部分数据
         JSONObject json = jsonObject.getJSONObject("data");
+        return json;
+    }
+
+    public static JSONObject getJson(String url, Map<String, Object> map) throws IOException
+    {
+        HttpClient client = HttpClients.createDefault();
+        HttpPost post = new HttpPost(url);
+        JSONObject jsonObject = null;
+        JSONObject date = new JSONObject();
+        date.putAll(map);
+        StringEntity s = new StringEntity(date.toString());
+        s.setContentEncoding("UTF-8");
+        s.setContentType("application/json");
+        post.setEntity(s);
+        post.addHeader("content-type", "application/json");
+        HttpResponse res = client.execute(post);
+        if (res.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            String result = EntityUtils.toString(res.getEntity());// 返回json格式：
+            jsonObject = JSONObject.parseObject(result);
+        }
+        //获取Json中data部分数据
+        JSONObject json = jsonObject.getJSONObject("data");
+        System.out.println(json.toString());
         return json;
     }
 }
