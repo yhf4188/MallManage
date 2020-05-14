@@ -12,6 +12,7 @@ public class UserBindMall {
     String password;
     String email;
     String phone;
+    String picture;
 
     public UserBindMall() {
     }
@@ -39,7 +40,7 @@ public class UserBindMall {
         this.phone = phone;
     }
 
-    public UserBindMall(int id,int userID, int mallID, String userName, int points, String password, String email, String phone) {
+    public UserBindMall(int id,int userID, int mallID, String userName, int points, String password, String email, String phone,String picture) {
         this.id = id;
         this.userID = userID;
         this.mallID = mallID;
@@ -48,5 +49,6 @@ public class UserBindMall {
         this.password = password;
         this.email = email;
         this.phone = phone;
+        this.picture = picture;
     }
 }

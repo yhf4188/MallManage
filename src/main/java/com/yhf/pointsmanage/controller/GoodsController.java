@@ -1,7 +1,10 @@
 package com.yhf.pointsmanage.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yhf.pointsmanage.constant.Constant;
 import com.yhf.pointsmanage.entity.Goods;
+import com.yhf.pointsmanage.entity.Mall;
+import com.yhf.pointsmanage.entity.User;
 import com.yhf.pointsmanage.service.GoodsService;
 import com.yhf.pointsmanage.tools.Message;
 import lombok.extern.slf4j.Slf4j;
@@ -53,14 +56,38 @@ public class GoodsController {
      * @return
      */
     @PostMapping("/getAllGoods")
-    public Message getAllGoods(@RequestParam("userName") String userName) {
+    public Message getAllGoods(@RequestBody JSONObject jsonObject) {
         try {
+            User user=jsonObject.getObject("user",User.class);
+            String userName=user.getUserName();
             Message message = new Message();
             List<Goods> goods = new ArrayList<>();
             goods = goodsService.getAllGoods(userName);
-            Map<String, Object> map = new HashMap<>();
-            map.put("goods",goods);
-            message.getData().putAll(map);
+            message.getData().put("goods",goods);;
+            message.setMessage(Constant.SUCCESS, "查找成功");
+            return message;
+        } catch (Exception e) {
+            Message message = new Message();
+            log.error(e.getMessage());
+            message.setMessage(Constant.ERROR, "查找异常").getData().put("Exception", e.getMessage());
+            return message;
+        }
+    }
+
+    /**
+     * 获取对应商城的商品数据
+     * @param mallId
+     * @return
+     */
+    @RequestMapping(value = "/getGoodsByMallId")
+    public Message getGoodsByMallId(@RequestParam("mallId") int mallId)
+    {
+        try {
+            Message message = new Message();
+            List<Goods> goods =new ArrayList<>();
+            goods = goodsService.getGoodsByMallId(mallId);
+            message.getData().put("goods",goods);
+            message.getData().put("goods",goods);;
             message.setMessage(Constant.SUCCESS, "查找成功");
             return message;
         } catch (Exception e) {

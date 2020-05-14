@@ -19,4 +19,10 @@ public class Constant {
 
     // 服务器处理失败(常用错误)
     public static int ERROR = 5000 ;
+
+    //收藏
+    public static String unstar = "star_border";
+
+    //未收藏
+    public static  String star = "star";
 }

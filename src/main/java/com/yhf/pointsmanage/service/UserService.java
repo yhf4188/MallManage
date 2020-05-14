@@ -88,10 +88,13 @@ public class UserService {
                 data.put(entry.getKey(), entry.getValue());
             }
             JSONObject attributionJ = data.getJSONObject("user");
+            if(attributionJ.isEmpty()) {
+                return false;
+            }
             UserBindMall userBindMall = new UserBindMall(user.getId(), mall.getId(), attributionJ.getString("username"), attributionJ.getInteger("points"),
                     attributionJ.getString("password"),attributionJ.getString("email"),attributionJ.getString("phone"));
             userDao.setUserBind(userBindMall);
-            return userDao.setUserBind(userBindMall);
+            return true;
         } catch (RuntimeException e) {
             throw e;
         }

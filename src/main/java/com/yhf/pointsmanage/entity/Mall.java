@@ -12,11 +12,12 @@ public class Mall {
     private String order_impl;//订单接口地址
     private String points_impl;//积分操作接口地址
     private String attribution_impl;//个人信息接口地址
+    private String pic;//背景图片地址
 
     public Mall() {
     }
 
-    public Mall(int id, String name, String shop_impl, String consume_impl, String logistics_impl, String order_impl, String points_impl, String attribution_impl) {
+    public Mall(int id, String name, String shop_impl, String consume_impl, String logistics_impl, String order_impl, String points_impl, String attribution_impl, String pic) {
         this.id = id;
         this.name = name;
         this.shop_impl = shop_impl;
@@ -25,5 +26,6 @@ public class Mall {
         this.order_impl = order_impl;
         this.points_impl = points_impl;
         this.attribution_impl = attribution_impl;
+        this.pic = pic;
     }
 }

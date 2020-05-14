@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Mapper
 public interface MallDao {
-    List<Mall> getMallIpml(@Param("userName") String userName);
+    List<Mall> getMallImpl(@Param("userName") String userName);
     List<Mall> getAllMall();
     Map<String,String> getInMallID();
 }
