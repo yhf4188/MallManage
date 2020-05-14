@@ -54,7 +54,6 @@
         INNER JOIN `user_mall` u_m ON u.id=u_m.user_id
         INNER JOIN `bind` m ON u_m.bind_id=m.id
         WHERE u.user_name = #{userName}
-        AND u.password = #{password}
     </select>
 
     <!-- 查询用户名是否被注册过 -->

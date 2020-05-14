@@ -12,11 +12,16 @@
         <result column="goods_browse" property="goods_browse" jdbcType="INTEGER"></result>
         <result column="goods_classf" property="goods_classf" jdbcType="INTEGER"></result>
         <result column="mall_id" property="mallID" jdbcType="INTEGER"></result>
-        <result column="im_mall_id" property="inMallID" jdbcType="VARCHAR"></result>
+        <result column="in_mall_id" property="inMallID" jdbcType="VARCHAR"></result>
+        <result column="star" property="star" jdbcType="VARCHAR"></result>
     </resultMap>
 
     <sql id="Goods_Column_List" >
         goods_name,goods_points,goods_pic,goods_num,goods_browse,mall_id,goods_classf,in_mall_id
+    </sql>
+
+    <sql id="Goods_Star_Column_List" >
+        goods_name,goods_points,goods_pic,goods_num,goods_browse,mall_id,goods_classf,in_mall_id,star
     </sql>
 
     <insert id="insertList" parameterType="java.util.List">
@@ -37,7 +42,25 @@
         </foreach>
     </insert>
 
-    <select id="getInMallID" parameterType="java.util.List">
+    <select id="getInMallID" resultType="java.lang.String">
         SELECT in_mall_id FROM goods
+    </select>
+
+    <select id="getGoodsByMallIdAndUser" resultMap="GoodsResultMap">
+        SELECT
+        *
+        FROM (
+        SELECT g.*,COALESCE(s.star,'star_border') star
+        FROM goods g
+        LEFT JOIN (
+        SELECT * from star WHERE user_id=#{userID}
+        ) s
+        ON s.goods_id=g.id
+        ) a
+        WHERE a.mall_id=#{mallID}
+    </select>
+
+    <select id="getGoodsByMallId" resultType="com.yhf.pointsmanage.entity.Goods">
+        SELECT * FROM goods where mall_id=#{mallID}
     </select>
 </mapper>

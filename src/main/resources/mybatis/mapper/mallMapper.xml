@@ -13,6 +13,7 @@
         <result property="order_impl" column="orderimpl_ad" jdbcType="VARCHAR"/>
         <result property="points_impl" column="pointsimpl_ad" jdbcType="VARCHAR"/>
         <result property="attribution_impl" column="attributionimpl_ad" jdbcType="VARCHAR"/>
+        <result property="pic" column="pic" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- 根据用户名查找用户对应的商品链接  -->
