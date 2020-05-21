@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhf.pointsmanage.dao.AddressDao">
+
+    <resultMap id="addressMapper" type="com.yhf.pointsmanage.entity.Address">
+        <id column="id" property="id" jdbcType="INTEGER"></id>
+        <result column="user_mall_id" property="user_mall_id" jdbcType="INTEGER"></result>
+        <result column="address" property="address" jdbcType="VARCHAR"></result>
+        <result column="ad_default" property="ad_default" jdbcType="TINYINT"></result>
+        <result column="origin_id" property="origin_id" jdbcType="INTEGER"></result>
+        <result column="have_delete" property="have_delete" jdbcType="TINYINT"></result>
+    </resultMap>
+
+    <insert id="insertAddress" parameterType="com.yhf.pointsmanage.entity.Address">
+        INSERT INTO address(user_mall_id,address,ad_default,origin_id) values(#{user_mall_id},#{address},#{ad_default},#{origin_id})
+    </insert>
+
+    <update id="updateAddress">
+        UPDATE address SET address=#{address} WHERE id=#{id} AND have_delete!=true
+    </update>
+
+    <update id="deleteAddress">
+        UPDATE address SET have_delete=1 WHERE id=#{id} AND have_delete!=true
+    </update>
+
+    <select id="getAddress" resultMap="addressMapper">
+        SELECT a.*
+        FROM address a
+        LEFT JOIN user_mall um ON um.id=a.user_mall_id
+        WHERE a.user_mall_id AND a.have_delete!=true
+    </select>
+
+    <select id="getOneAddress" resultMap="addressMapper">
+        SELECT *
+        FROM address
+        WHERE id=#{id} AND have_delete!=true
+    </select>
+
+    <select id="getDefaultAddress" resultMap="addressMapper">
+        SELECT *
+        FROM address
+        WHERE user_mall_id=#{user_mall_id} AND ad_default=#{ad_default} AND have_delete!=true
+    </select>
+</mapper>

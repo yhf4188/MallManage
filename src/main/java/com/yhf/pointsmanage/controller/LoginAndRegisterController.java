@@ -1,15 +1,18 @@
 package com.yhf.pointsmanage.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yhf.pointsmanage.constant.Constant;
 import com.yhf.pointsmanage.entity.User;
 import com.yhf.pointsmanage.service.UserService;
 import com.yhf.pointsmanage.tools.Message;
 import com.yhf.pointsmanage.tools.RedisService;
+import com.yhf.pointsmanage.tools.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -21,10 +24,10 @@ public class LoginAndRegisterController {
     @Autowired
     private UserService userService;
 
-    @Autowired
+    @Resource
     private ValueOperations<String, Object> valueOperations;
 
-    @Autowired
+    @Resource
     private RedisService redisService;
 
     /**
@@ -46,13 +49,16 @@ public class LoginAndRegisterController {
                 message.setMessage(Constant.SUCCESS, "登陆成功");
                 //将登陆信息存入redis缓存，以实现在其他地方登陆后的排挤操作
                 //生成token
-                String token = "user_" + UUID.randomUUID().toString();
-                valueOperations.set(user.getUserName(), token);
-                redisService.persistKey(user.getUserName());
+                User u = new User();
+                u.setUserName(username);
+                String token = TokenUtil.sign(u);
                 message.getData().put("user", user);
                 message.getData().put("token", token);
+                valueOperations.set(user.getUserName(), token);
+                redisService.persistKey(user.getUserName());
             }
         } catch (RuntimeException e) {
+            e.printStackTrace();
             log.error(e.getMessage());
             message.setMessage(Constant.ERROR, "登陆异常：" + e.getMessage());
         } finally {
@@ -63,13 +69,21 @@ public class LoginAndRegisterController {
     /**
      * 登出操作（当前端监听到程序关闭，在前端SessionStorage删除登录信息的同时，删除服务器的登录信息）
      *
-     * @param userName
+     * @param jsonObject
      */
-    @GetMapping("/logout")
-    public void logout(@RequestParam("username") String userName, @RequestParam("token") String token) {
-        //判断用户是否被挤掉，如果已经被挤掉，那么就忽略操作
-        if (token.equals(valueOperations.get(userName)))
+    @RequestMapping("/logout")
+    public Message logout(@RequestBody JSONObject jsonObject) {
+        Message message = new Message();
+        String userName = jsonObject.getString("username");
+        try {
             redisService.deleteKey(userName);
+            message.setMessage(Constant.SUCCESS,"注销成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            message.setMessage(Constant.ERROR,"注销异常");
+        } finally {
+            return message;
+        }
     }
 
     /**

@@ -45,7 +45,7 @@ class PointsmanageApplicationTests {
         mall.setId(1);
         mall.setName("兑兑积分");
         mall.setAttribution_impl("http://localhost:8081/user/bindUser");
-        Attribute user=new Attribute(0,"yhf","123456","1304039757@qq.com","13961862263","0");
+        Attribute user=new Attribute(0,"yhf","123456","1304039757@qq.com","13961862263",0);
 //        Map<String,Object> map=new HashMap<>();
 //        map.put("user",user);
 //        map.put("mall",mall);

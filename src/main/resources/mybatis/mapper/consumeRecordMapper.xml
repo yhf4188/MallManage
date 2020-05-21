@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhf.pointsmanage.dao.ConsumeRecordDao">
+
+    <resultMap id="orderMapper" type="com.yhf.pointsmanage.entity.ConsumeRecord">
+        <id property="id" column="id" jdbcType="INTEGER"></id>
+        <result property="goods_id" column="good_id" jdbcType="VARCHAR"></result>
+        <result property="user_id" column="user_id" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <select id="getOrder" resultMap="orderMapper">
+        SELECT * FROM good_order
+        WHERE user_id=#{id}
+    </select>
+
+    <insert id="insertOrder" parameterType="com.yhf.pointsmanage.entity.ConsumeRecord">
+        INSERT INTO good_order(good_id,user_id) VALUES (#{goods_id},#{user_id})
+    </insert>
+</mapper>

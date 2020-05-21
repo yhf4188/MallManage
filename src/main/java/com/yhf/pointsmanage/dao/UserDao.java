@@ -17,11 +17,15 @@ public interface UserDao {
 
     String havePhone(@Param("phone") String phone);
 
-    Boolean register(User user);
+    boolean register(User user);
 
     User getUserMallByUserName(@Param("userName") String userName);
 
-    Boolean setUserBind(UserBindMall userBindMall);
+    boolean setUserBind(UserBindMall userBindMall);
 
     ArrayList<UserBindMall> getUserBind(@Param("userID") int userID);
+
+    UserBindMall getUserBindByMall(@Param("userID") int userID,@Param("mallID") int mallID);
+
+    boolean updateUserBindMall(UserBindMall userBindMall);
 }

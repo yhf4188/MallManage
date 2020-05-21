@@ -29,4 +29,9 @@
     <select id="getAllMall" resultMap="mallMap">
         SELECT * FROM bind
     </select>
+
+    <!-- 根据商城id查找商城 -->
+    <select id="getMall" resultMap="mallMap">
+        SELECT * FROM bind WHERE id=#{id}
+    </select>
 </mapper>

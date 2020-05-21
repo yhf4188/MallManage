@@ -31,6 +31,7 @@
         <result property="password" column="password" jdbcType="VARCHAR"/>
         <result property="email" column="email" jdbcType="VARCHAR"/>
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <collection property="address" column="id" select="com.yhf.pointsmanage.dao.AddressDao.getAddress"/>
     </resultMap>
     <sql id="user">
         id,user_name,password,user_type,phone
@@ -104,4 +105,19 @@
         FROM user_mall
         WHERE user_id=#{userID}
     </select>
+
+    <select id="getUserBindByMall" resultMap="userBind">
+        SELECT
+        *
+        FROM user_mall
+        WHERE user_id=#{userID}
+        AND bind_id=#{mallID}
+    </select>
+
+    <update id="updateUserBindMall">
+        UPDATE user_mall
+        SET points=#{points}
+        WHERE user_id=#{userID}
+        AND bind_id=#{mallID}
+    </update>
 </mapper>

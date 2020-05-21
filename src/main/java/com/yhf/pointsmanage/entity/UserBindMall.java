@@ -2,6 +2,8 @@ package com.yhf.pointsmanage.entity;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class UserBindMall {
     int id;
@@ -13,6 +15,7 @@ public class UserBindMall {
     String email;
     String phone;
     String picture;
+    List<Address> address;
 
     public UserBindMall() {
     }

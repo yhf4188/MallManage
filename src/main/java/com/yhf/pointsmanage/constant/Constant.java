@@ -8,6 +8,7 @@ public class Constant {
     public static final int FAILURE = 2002;
     public static final int EXCEPTION = 2003;
     // token
+    public static int TOKEN_NULL = 4000;//token 不存在
     public static int TOKEN_ERROR = 4001;//token 不合法
     public static int TOKEN_OVERDUE = 4002;//token 已过期
 

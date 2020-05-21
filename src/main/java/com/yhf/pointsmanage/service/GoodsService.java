@@ -1,35 +1,25 @@
 package com.yhf.pointsmanage.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.yhf.pointsmanage.dao.GoodsDao;
-import com.yhf.pointsmanage.dao.MallDao;
-import com.yhf.pointsmanage.dao.UserDao;
-import com.yhf.pointsmanage.entity.Goods;
-import com.yhf.pointsmanage.entity.Mall;
-import com.yhf.pointsmanage.entity.User;
+import com.yhf.pointsmanage.dao.*;
+import com.yhf.pointsmanage.entity.*;
 import com.yhf.pointsmanage.tools.JsonData;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.yhf.pointsmanage.constant.Constant;
 
 @Slf4j
 @Service
 public class GoodsService {
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private GoodsDao goodsDao;
@@ -40,18 +30,28 @@ public class GoodsService {
     @Autowired
     private MallDao mallDao;
 
+    @Autowired
+    private AddressDao addressDao;
+
+    @Autowired
+    private ConsumeRecordDao consumeRecordDao;
+
     //导入商品数据
     public int setGoods() {
         List<Mall> malls = new ArrayList<>();
         malls = mallDao.getAllMall();
-        Map<String, String> inMallID = new HashMap<>();
-        inMallID = mallDao.getInMallID();
+        List<String> inMallID = new ArrayList<>();
         List<Goods> goods = new ArrayList<>();
         try {
             //分商城导入商品数据
             for (Mall mall : malls) {
+                inMallID = goodsDao.getInMallID(mall.getId());
                 String url = mall.getShop_impl();
                 JSONObject goodsJson = JsonData.getJson(url);
+                if(goodsJson.isEmpty())
+                {
+                    return Constant.FAILURE;
+                }
                 JSONObject data = new JSONObject();
                 Iterator it = goodsJson.entrySet().iterator();
                 while (it.hasNext()) {
@@ -60,22 +60,27 @@ public class GoodsService {
                 }
                 //将data中数据转存到List中
                 for (String key : data.keySet()) {
-                    System.out.println(data.get(key));
                     JSONObject goodJ = data.getJSONObject(key);
-                    String inMallId = goodJ.getString("name") + goodJ.getInteger("id");
-                    if (!inMallID.containsKey(inMallId)) {
+                    String inMallId = goodJ.getString("id");
+                    if (!inMallID.contains(inMallId)) {
                         Goods good = new Goods(goodJ.getString("name"), goodJ.getInteger("points"), goodJ.getString("picture")
-                                , goodJ.getInteger("goods_num"), 0, goodJ.getInteger("goods_classf"), inMallId);
+                                , goodJ.getInteger("goods_num"), 0, goodJ.getInteger("goods_classf"),mall.getId(), inMallId);
                         goods.add(good);
+                    } else {
+                        goodsDao.update(new Goods(goodJ.getString("name"), goodJ.getInteger("points"), goodJ.getString("picture")
+                                , goodJ.getInteger("goods_num"), 0, goodJ.getInteger("goods_classf"),mall.getId(), inMallId));
                     }
                 }
             }
-            boolean in_su = goodsDao.insertList(goods);
+            boolean in_su = true;
+            if(!goods.isEmpty())
+                in_su = goodsDao.insertList(goods);
             if (in_su) {
                 return Constant.SUCCESS;
             } else
                 return Constant.FAILURE;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(e.getMessage());
             return Constant.EXCEPTION;
         }
@@ -93,6 +98,7 @@ public class GoodsService {
             }
             return goods;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(e.getMessage());
             return null;
         }
@@ -106,8 +112,56 @@ public class GoodsService {
             return goods;
         }catch (Exception e)
         {
+            e.printStackTrace();
             log.error(e.getMessage());
             return null;
+        }
+    }
+
+    //兑换
+    public Integer cost(String userName,int goodID, int mallID,Address address) throws IOException{
+        try{
+            Mall mall=mallDao.getMall(mallID);
+            String url=mall.getConsume_impl();
+            UserBindMall userBindMall=userDao.getUserBindByMall(userDao.getUserMallByUserName(userName).getId(),mallID);
+            if(address==null)
+            {
+                return 1000;
+            }
+            Map<String,Object> map =new ConcurrentHashMap<>();
+            map.put("userName",userName);
+            map.put("mallID",goodID);
+            map.put("addressID",address.getOrigin_id());
+            Integer code = JsonData.getJsonHaveNoReturn(url,map);
+            if(code == Constant.SUCCESS)
+            {
+                ConsumeRecord order=new ConsumeRecord();
+                order.setGoods_id(goodID);
+                order.setUser_id(userBindMall.getUserID());
+                consumeRecordDao.insertOrder(order);
+                userService.updateUserBind(userBindMall);
+                setGoods();
+            }
+            return code;
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error(e.getMessage());
+            throw e;
+        }
+    }
+
+    //获取一页商品
+    public List<Goods> getGoodsByPage(Integer mallID,Integer classif, Integer userID)
+    {
+        List<Goods> list=new ArrayList<>();
+        try
+        {
+            list = goodsDao.getGoodsByPage(userID,mallID,classif);
+        }catch (Exception e)
+        {
+            throw e;
+        }finally {
+            return list;
         }
     }
 }

@@ -78,8 +78,9 @@ public class UserController {
                 message.setMessage(Constant.SUCCESS,"绑定成功");
             }
             else message.setMessage(Constant.FAILURE,"绑定失败");
-        }catch (RuntimeException e)
+        }catch (Exception e)
         {
+            e.printStackTrace();
             log.error(e.getMessage());
             message.setMessage(Constant.ERROR,e.getMessage());
         }

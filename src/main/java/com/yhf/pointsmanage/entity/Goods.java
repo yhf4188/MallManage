@@ -28,6 +28,16 @@ public class Goods {
         this.inMallID = inMallID;
     }
 
+    public Goods( String name, int points, String picture, int goods_num, int goods_browse,int goods_classf, int mallID, String inMallID) {
+        this.name = name;
+        this.points = points;
+        this.picture = picture;
+        this.goods_num = goods_num;
+        this.goods_browse = goods_browse;
+        this.goods_classf=goods_classf;
+        this.mallID = mallID;
+        this.inMallID = inMallID;
+    }
     public Goods(int id, String name, int points, String picture, int goods_num, int goods_browse, int mallID, String inMallID) {
         this.id = id;
         this.name = name;
@@ -38,7 +48,6 @@ public class Goods {
         this.mallID = mallID;
         this.inMallID = inMallID;
     }
-
     public Goods(int id, String name, int points, String picture, int goods_num, int goods_browse, int goods_classf, int mallID, String inMallID, String star) {
         this.id = id;
         this.name = name;

@@ -16,11 +16,11 @@
         <result column="star" property="star" jdbcType="VARCHAR"></result>
     </resultMap>
 
-    <sql id="Goods_Column_List" >
+    <sql id="Goods_Column_List">
         goods_name,goods_points,goods_pic,goods_num,goods_browse,mall_id,goods_classf,in_mall_id
     </sql>
 
-    <sql id="Goods_Star_Column_List" >
+    <sql id="Goods_Star_Column_List">
         goods_name,goods_points,goods_pic,goods_num,goods_browse,mall_id,goods_classf,in_mall_id,star
     </sql>
 
@@ -29,21 +29,21 @@
         (<include refid="Goods_Column_List"></include>)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-        (
+            (
             #{item.name},
             #{item.points},
             #{item.picture},
             #{item.goods_num},
-            #{item.goods_browse}
-            #{item.mallID}
-            #{item.goods_classf}
+            #{item.goods_browse},
+            #{item.mallID},
+            #{item.goods_classf},
             #{item.inMallID}
-        )
+            )
         </foreach>
     </insert>
 
     <select id="getInMallID" resultType="java.lang.String">
-        SELECT in_mall_id FROM goods
+        SELECT in_mall_id FROM goods WHERE mall_id = #{mallID}
     </select>
 
     <select id="getGoodsByMallIdAndUser" resultMap="GoodsResultMap">
@@ -62,5 +62,31 @@
 
     <select id="getGoodsByMallId" resultType="com.yhf.pointsmanage.entity.Goods">
         SELECT * FROM goods where mall_id=#{mallID}
+    </select>
+
+    <update id="deleteAll">
+        truncate table goods
+    </update>
+
+    <update id="update" parameterType="com.yhf.pointsmanage.entity.Goods">
+        UPDATE goods SET goods_num=#{goods_num} WHERE mall_id=#{mallID} AND in_mall_id=#{inMallID}
+    </update>
+
+    <select id="getGoodsByPage" resultMap="GoodsResultMap">
+        SELECT
+        *
+        FROM (
+        SELECT g.*,COALESCE(s.star,'star_border') star
+        FROM goods g
+        LEFT JOIN (
+        SELECT * from star WHERE user_id=#{userID}
+        ) s
+        ON s.goods_id=g.id
+        ) a
+        WHERE a.mall_id=#{mallID} AND goods_classf=#{classif}
+    </select>
+
+    <select id="getGoodsByMallIDAndInMall" resultMap="GoodsResultMap">
+        SELECT * FROM goods WHERE mall_id=#{mallID} AND in_mall_id=#{inMallID}
     </select>
 </mapper>

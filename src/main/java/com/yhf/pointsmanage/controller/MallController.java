@@ -21,6 +21,10 @@ public class MallController {
     @Autowired
     private MallService mallService;
 
+    /**
+     * 获取商城信息
+     * @return
+     */
     @RequestMapping(value = "/getAllMall",method = RequestMethod.POST)
     public Message getAllMall()
     {

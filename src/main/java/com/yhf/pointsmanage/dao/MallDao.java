@@ -10,6 +10,6 @@ import java.util.Map;
 @Mapper
 public interface MallDao {
     List<Mall> getMallImpl(@Param("userName") String userName);
+    Mall getMall(@Param("id") int id);
     List<Mall> getAllMall();
-    Map<String,String> getInMallID();
 }

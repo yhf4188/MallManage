@@ -9,9 +9,9 @@ public class Attribute {
     String password;
     String email;
     String phone;
-    String points;
+    int points;
 
-    public Attribute(int id, String username, String password, String email, String phone, String points) {
+    public Attribute(int id, String username, String password, String email, String phone, int points) {
         this.id = id;
         this.username = username;
         this.password = password;
