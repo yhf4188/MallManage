@@ -34,4 +34,27 @@
     <select id="getMall" resultMap="mallMap">
         SELECT * FROM bind WHERE id=#{id}
     </select>
+
+    <!-- 查询最新插入商城 -->
+    <select id="getLastMall" resultMap="mallMap">
+        SELECT * FROM bind ORDER BY id DESC limit 1
+    </select>
+
+    <!-- 添加绑定商城 -->
+    <insert id="setMall" parameterType="com.yhf.pointsmanage.entity.Mall">
+        INSERT INTO bind(name,shopimpl_ad,consumeimpl_ad,logisticsimpl_ad，orderimpl_ad，pointsimpl_ad，attributionimpl_ad,pic)
+        VALUES (#{name},#{shop_impl},#{consume_impl},#{logistics_impl},#{order_impl},#{points_impl},#{attribution_impl},#{pic})
+    </insert>
+
+    <!--更新绑定商城-->
+    <update id="updateMall" parameterType="com.yhf.pointsmanage.entity.Mall">
+        UPDATE bind SET shopimpl_ad=#{shop_impl},consumeimpl_ad=#{consume_impl},orderimpl_ad=#{order_impl},attributionimpl_ad=#{attribution_impl},
+        pic=#{pic},name=#{name} where id=#{id}
+    </update>
+
+    <!-- 查询相同商城 -->
+    <select id="getSameMall" resultMap="mallMap">
+        SELECT * FROM bind WHERE name=#{name} or shopimpl_ad = #{shop_impl} or consumeimpl_ad =#{consume_impl}
+        or  orderimpl_ad = #{order_impl} or attributionimpl_ad = #{attribution_impl}
+    </select>
 </mapper>

@@ -45,7 +45,7 @@ public class JsonData {
         JSONObject date = new JSONObject();
         JSONObject json = new JSONObject();
         date.putAll(map);
-        StringEntity s = new StringEntity(date.toString());
+        StringEntity s = new StringEntity(date.toString(),"UTF-8");
         s.setContentEncoding("UTF-8");
         s.setContentType("application/json");
         post.setEntity(s);

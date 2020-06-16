@@ -4,7 +4,7 @@ package com.yhf.pointsmanage.entity;
 import lombok.Data;
 
 @Data
-public class Address {
+public class    Address {
     Integer id;
     Integer user_mall_id;
     Integer origin_id;

@@ -6,6 +6,8 @@ import com.yhf.pointsmanage.entity.*;
 import com.yhf.pointsmanage.tools.JsonData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -13,6 +15,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.yhf.pointsmanage.constant.Constant;
+
+import javax.annotation.Resource;
 
 @Slf4j
 @Service
@@ -35,6 +39,12 @@ public class GoodsService {
 
     @Autowired
     private ConsumeRecordDao consumeRecordDao;
+
+    @Resource
+    private RedisTemplate redisTemplate;
+
+    @Resource
+    private ValueOperations<String, Object> valueOperations;
 
     //导入商品数据
     public int setGoods() {
@@ -136,7 +146,8 @@ public class GoodsService {
             if(code == Constant.SUCCESS)
             {
                 ConsumeRecord order=new ConsumeRecord();
-                order.setGoods_id(goodID);
+                order.setGoods_id(goodsDao.getGoodsByMallIDAndInMall(mallID,goodID).getId());
+                System.out.println(order.getGoods_id());
                 order.setUser_id(userBindMall.getUserID());
                 consumeRecordDao.insertOrder(order);
                 userService.updateUserBind(userBindMall);
@@ -162,6 +173,36 @@ public class GoodsService {
             throw e;
         }finally {
             return list;
+        }
+    }
+
+    //添加收藏
+    public boolean star(int goodID, int userID) {
+        try {
+            String key = "goods_key:" + goodID;
+            if (redisTemplate.opsForSet().isMember(key, userID)) {
+                redisTemplate.opsForSet().remove(key, userID);
+                goodsDao.unstar(goodID, userID);
+            } else {
+                redisTemplate.opsForSet().add(key, userID);
+                goodsDao.star(goodID, userID);
+            }
+            return true;
+        }catch (Exception e)
+        {
+            throw e;
+        }
+    }
+
+    //获取收藏
+    public List<Goods> getCollectionByPage(int userID) {
+        try{
+            List<Goods> collections = new ArrayList<>();
+            collections=goodsDao.getCollectionByPage(userID);
+            return collections;
+        }catch (Exception e)
+        {
+            throw  e;
         }
     }
 }

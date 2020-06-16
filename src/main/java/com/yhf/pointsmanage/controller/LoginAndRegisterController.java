@@ -3,6 +3,7 @@ package com.yhf.pointsmanage.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.yhf.pointsmanage.constant.Constant;
 import com.yhf.pointsmanage.entity.User;
+import com.yhf.pointsmanage.exception.CustomizeException;
 import com.yhf.pointsmanage.service.UserService;
 import com.yhf.pointsmanage.tools.Message;
 import com.yhf.pointsmanage.tools.RedisService;
@@ -57,6 +58,10 @@ public class LoginAndRegisterController {
                 valueOperations.set(user.getUserName(), token);
                 redisService.persistKey(user.getUserName());
             }
+        }catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
         } catch (RuntimeException e) {
             e.printStackTrace();
             log.error(e.getMessage());
@@ -78,7 +83,11 @@ public class LoginAndRegisterController {
         try {
             redisService.deleteKey(userName);
             message.setMessage(Constant.SUCCESS,"注销成功");
-        } catch (Exception e) {
+        } catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
+        }catch (Exception e) {
             e.printStackTrace();
             message.setMessage(Constant.ERROR,"注销异常");
         } finally {
@@ -101,6 +110,10 @@ public class LoginAndRegisterController {
             if (registerSuccess) {
                 message.setMessage(Constant.SUCCESS, "注册成功");
             } else message.setMessage(Constant.FAILURE, "注册失败");
+        }catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
         } catch (RuntimeException e) {
             log.error(e.getMessage());
             message.setMessage(Constant.ERROR, "注册异常：" + e.getMessage());
@@ -123,6 +136,10 @@ public class LoginAndRegisterController {
             if (have != null) {
                 message.setMessage(Constant.FAILURE, "该手机已注册");
             } else message.setMessage(Constant.SUCCESS, "可以使用");
+        }catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
         } catch (RuntimeException e) {
             log.error(e.getMessage());
             message.setMessage(Constant.ERROR, "查询异常：" + e.getMessage());
@@ -145,7 +162,11 @@ public class LoginAndRegisterController {
             if (have != null) {
                 message.setMessage(Constant.FAILURE, "该用户已注册");
             } else message.setMessage(Constant.SUCCESS, "可以使用");
-        } catch (RuntimeException e) {
+        } catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
+        }catch (RuntimeException e) {
             log.error(e.getMessage());
             message.setMessage(Constant.ERROR, "查询异常：" + e.getMessage());
         } finally {

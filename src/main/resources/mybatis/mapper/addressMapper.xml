@@ -20,7 +20,12 @@
     <update id="updateAddress">
         UPDATE address SET address=#{address} WHERE id=#{id} AND have_delete!=true
     </update>
-
+    <update id="updateDefaultAddress">
+        UPDATE address SET ad_default=1 WHERE id=#{id} AND have_delete!=true
+    </update>
+    <update id="cancelDefaultAddress">
+        UPDATE address SET ad_default=0 WHERE id!=#{id} AND have_delete!=true
+    </update>
     <update id="deleteAddress">
         UPDATE address SET have_delete=1 WHERE id=#{id} AND have_delete!=true
     </update>

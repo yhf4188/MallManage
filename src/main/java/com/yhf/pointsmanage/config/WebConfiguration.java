@@ -1,5 +1,6 @@
 package com.yhf.pointsmanage.config;
 
+import com.yhf.pointsmanage.interceptor.AccessLimitInterceptor;
 import com.yhf.pointsmanage.interceptor.TokenInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
@@ -20,9 +21,12 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     private TokenInterceptor tokenInterceptor;
 
+    private AccessLimitInterceptor accessLimitInterceptor;
+
     //构造方法
-    public WebConfiguration(TokenInterceptor tokenInterceptor){
+    public WebConfiguration(TokenInterceptor tokenInterceptor,AccessLimitInterceptor accessLimitInterceptor){
         this.tokenInterceptor = tokenInterceptor;
+        this.accessLimitInterceptor = accessLimitInterceptor;
     }
 
     @Override
@@ -44,14 +48,14 @@ public class WebConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry){
         List<String> excludePath = new ArrayList<>();
         //排除拦截，除了注册登录(此时还没token)，其他都拦截
-        excludePath.add("/loginAndRegister/register");  //登录
-        excludePath.add("/loginAndRegister/login");     //注册
+        excludePath.add("/loginAndRegister/**");
         excludePath.add("/static/**");  //静态资源
         excludePath.add("/assets/**");  //静态资源
 
         registry.addInterceptor(tokenInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(excludePath);
+        registry.addInterceptor(accessLimitInterceptor).addPathPatterns("/**");
         WebMvcConfigurer.super.addInterceptors(registry);
     }
 }

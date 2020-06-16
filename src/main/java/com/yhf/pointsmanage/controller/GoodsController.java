@@ -7,8 +7,10 @@ import com.yhf.pointsmanage.constant.Constant;
 import com.yhf.pointsmanage.entity.Address;
 import com.yhf.pointsmanage.entity.Goods;
 import com.yhf.pointsmanage.entity.User;
+import com.yhf.pointsmanage.exception.CustomizeException;
 import com.yhf.pointsmanage.service.GoodsService;
 import com.yhf.pointsmanage.tools.Message;
+import com.yhf.pointsmanage.tools.limit.AccessLimit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -55,19 +57,22 @@ public class GoodsController {
      */
     @PostMapping("/getAllGoods")
     public Message getAllGoods(@RequestBody JSONObject jsonObject) {
+        Message message = new Message();
         try {
             User user=jsonObject.getObject("user",User.class);
             String userName=user.getUserName();
-            Message message = new Message();
             List<Goods> goods = new ArrayList<>();
             goods = goodsService.getAllGoods(userName);
             message.getData().put("goods",goods);;
             message.setMessage(Constant.SUCCESS, "查找成功");
-            return message;
+        }catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
         } catch (Exception e) {
-            Message message = new Message();
             log.error(e.getMessage());
             message.setMessage(Constant.ERROR, "查找异常").getData().put("Exception", e.getMessage());
+        } finally {
             return message;
         }
     }
@@ -80,18 +85,21 @@ public class GoodsController {
     @RequestMapping(value = "/getGoodsByMallId",method=RequestMethod.POST)
     public Message getGoodsByMallId(@RequestParam("mallId") int mallId)
     {
+        Message message = new Message();
         try {
-            Message message = new Message();
             List<Goods> goods =new ArrayList<>();
             goods = goodsService.getGoodsByMallId(mallId);
             message.getData().put("goods",goods);
             message.getData().put("goods",goods);;
             message.setMessage(Constant.SUCCESS, "查找成功");
-            return message;
+        }catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
         } catch (Exception e) {
-            Message message = new Message();
             log.error(e.getMessage());
             message.setMessage(Constant.ERROR, "查找异常").getData().put("Exception", e.getMessage());
+        }finally {
             return message;
         }
     }
@@ -119,6 +127,10 @@ public class GoodsController {
             else if(code.equals(1000))
                 message.setMessage(code,"请先设置收货地址");
             else message.setMessage(Constant.ERROR,"系统异常");
+        }catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
         }catch (Exception e){
             log.error(e.getMessage());
             message.setMessage(Constant.ERROR,"系统异常");
@@ -149,6 +161,10 @@ public class GoodsController {
             PageInfo<Goods> pageInfo = new PageInfo<>(list);
             message.setMessage(Constant.SUCCESS,"获取成功");
             message.getData().put("goods",pageInfo);
+        }catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -156,6 +172,59 @@ public class GoodsController {
             message.setMessage(Constant.ERROR,"获取异常");
         }finally {
           return message;
+        }
+    }
+
+    @AccessLimit(limit = 2, sec = 1)
+    @RequestMapping(value = "/star",method = RequestMethod.POST)
+    public Message star(@RequestBody JSONObject jsonObject)
+    {
+        Message message=new Message();
+        try {
+             Goods goods = jsonObject.getObject("goods",Goods.class);
+             User user = jsonObject.getObject("user",User.class);
+             boolean success = goodsService.star(goods.getId(),user.getId());
+             if(success)
+             {
+                 message.setMessage(Constant.SUCCESS,"收藏成功");
+             } else message.setMessage(Constant.FAILURE, "收藏失败");
+        }catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            message.setMessage(Constant.ERROR,"收藏异常");
+        }finally {
+            return message;
+        }
+    }
+
+    @RequestMapping(value = "/getCollectionByPage",method = RequestMethod.POST)
+    public Message getCollectionByPage(@RequestBody JSONObject jsonObject)
+    {
+        Message message=new Message();
+        try{
+            int pageNo=jsonObject.getInteger("pageNo");
+            int pageNum=jsonObject.getInteger("pageNum");
+            int userID=jsonObject.getInteger("userID");
+            PageHelper.startPage(pageNo,pageNum);
+            List<Goods> list = goodsService.getCollectionByPage(userID);
+            PageInfo<Goods> pageInfo = new PageInfo<>(list);
+            message.setMessage(Constant.SUCCESS,"获取成功");
+            message.getData().put("goods",pageInfo);
+        }catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error(e.getMessage());
+            message.setMessage(Constant.ERROR,"获取异常");
+        }finally {
+            return message;
         }
     }
 }

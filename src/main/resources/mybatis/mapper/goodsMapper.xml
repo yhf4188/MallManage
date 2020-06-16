@@ -43,7 +43,7 @@
     </insert>
 
     <select id="getInMallID" resultType="java.lang.String">
-        SELECT in_mall_id FROM goods WHERE mall_id = #{mallID}
+        SELECT in_mall_id FROM goods WHERE mall_id = #{mallID} order by rand()
     </select>
 
     <select id="getGoodsByMallIdAndUser" resultMap="GoodsResultMap">
@@ -57,11 +57,11 @@
         ) s
         ON s.goods_id=g.id
         ) a
-        WHERE a.mall_id=#{mallID}
+        WHERE a.mall_id=#{mallID} order by rand()
     </select>
 
     <select id="getGoodsByMallId" resultType="com.yhf.pointsmanage.entity.Goods">
-        SELECT * FROM goods where mall_id=#{mallID}
+        SELECT * FROM goods where mall_id=#{mallID} order by rand()
     </select>
 
     <update id="deleteAll">
@@ -83,10 +83,25 @@
         ) s
         ON s.goods_id=g.id
         ) a
-        WHERE a.mall_id=#{mallID} AND goods_classf=#{classif}
+        WHERE a.mall_id=#{mallID} AND goods_classf=#{classif} order by rand()
     </select>
 
     <select id="getGoodsByMallIDAndInMall" resultMap="GoodsResultMap">
         SELECT * FROM goods WHERE mall_id=#{mallID} AND in_mall_id=#{inMallID}
+    </select>
+
+    <insert id="star">
+        insert into star(user_id,goods_id,star) VALUES (#{userID},#{goodID},'star')
+    </insert>
+
+    <delete id="unstar">
+        delete from star where goods_id=#{goodID} and user_id=#{userID}
+    </delete>
+
+    <select id="getCollectionByPage" resultMap="GoodsResultMap">
+        SELECT g.*,COALESCE (s.star,'star_border') star
+        FROM star s
+        LEFT JOIN goods g
+        ON s.goods_id = g.id AND s.user_id = #{userID}
     </select>
 </mapper>

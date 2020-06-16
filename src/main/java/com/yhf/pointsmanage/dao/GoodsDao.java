@@ -19,4 +19,7 @@ public interface GoodsDao {
     void update(Goods goods);
     List<Goods> getGoodsByPage(@Param("userID") int userID,@Param("mallID") int mallID, @Param("classif") int classif);
     Goods getGoodsByMallIDAndInMall(@Param("mallID") int mallID,@Param("inMallID") int inMallID);
+    int star(@Param("goodID") int goodsID,@Param("userID") int userID);
+    int unstar(@Param("goodID") int goodsID,@Param("userID") int userID);
+    List<Goods> getCollectionByPage(@Param("userID") int userID);
 }

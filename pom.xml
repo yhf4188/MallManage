@@ -12,7 +12,8 @@
     <artifactId>pointsmanage</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>pointsmanage</name>
-    <description>Demo project for Spring Boot</description>
+    <packaging>jar</packaging>
+    <description>MallManage</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -104,30 +105,30 @@
             <version>4.9.124.ALL</version>
         </dependency>
 
-        <!-- mahout -->
-        <dependency>
-            <groupId>org.apache.mahout</groupId>
-            <artifactId>mahout</artifactId>
-            <version>0.11.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.mahout</groupId>
-            <artifactId>mahout-examples</artifactId>
-            <version>0.11.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--&lt;!&ndash; mahout &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.mahout</groupId>-->
+            <!--<artifactId>mahout</artifactId>-->
+            <!--<version>0.11.1</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.mahout</groupId>-->
+            <!--<artifactId>mahout-examples</artifactId>-->
+            <!--<version>0.11.1</version>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.slf4j</groupId>-->
+                    <!--<artifactId>slf4j-log4j12</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
 
         <!--goEasy-->
-        <dependency>
-            <groupId>io.goeasy</groupId>
-            <artifactId>goeasy-sdk</artifactId>
-            <version>0.3.8</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>io.goeasy</groupId>-->
+            <!--<artifactId>goeasy-sdk</artifactId>-->
+            <!--<version>0.3.8</version>-->
+        <!--</dependency>-->
         <!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
         <dependency>
             <groupId>com.auth0</groupId>
@@ -144,12 +145,74 @@
     </dependencies>
 
     <build>
+        <!--解决idea打包没有xml-->
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <skip>true</skip>
+                    <compilerId>javac</compilerId>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                    <compilerVersion>1.8</compilerVersion>
+                    <verbose>true</verbose>
+                    <optimize>true</optimize>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.plexus</groupId>
+                        <artifactId>plexus-compiler-eclipse</artifactId>
+                        <version>2.2</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <!--<failOnMissingWebXml>false</failOnMissingWebXml>-->
+                    <includeEmptyDirs>true</includeEmptyDirs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <warSourceExcludes>upload/**</warSourceExcludes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
+
     </build>
 
 </project>

@@ -1,12 +1,9 @@
 package com.yhf.pointsmanage.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yhf.pointsmanage.constant.Constant;
-import com.yhf.pointsmanage.entity.Attribute;
-import com.yhf.pointsmanage.entity.Mall;
-import com.yhf.pointsmanage.entity.User;
-import com.yhf.pointsmanage.entity.UserBindMall;
+import com.yhf.pointsmanage.entity.*;
+import com.yhf.pointsmanage.exception.CustomizeException;
 import com.yhf.pointsmanage.service.UserService;
 import com.yhf.pointsmanage.tools.Message;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -48,6 +44,10 @@ public class UserController {
                 message.getData().put("token",token);
             }
             else message.setMessage(Constant.FAILURE,"获取失败");
+        }catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
         }catch (RuntimeException e)
         {
             log.error(e.getMessage());
@@ -78,6 +78,10 @@ public class UserController {
                 message.setMessage(Constant.SUCCESS,"绑定成功");
             }
             else message.setMessage(Constant.FAILURE,"绑定失败");
+        }catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -112,12 +116,105 @@ public class UserController {
                 message.setMessage(Constant.SUCCESS,"查找成功");
                 message.getData().put("mall",userBindMalls);
             }
+        }catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
         }catch (RuntimeException e)
         {
             log.error(e.getMessage());
             message.setMessage(Constant.ERROR,e.getMessage());
         }
         finally {
+            return message;
+        }
+    }
+
+
+    @RequestMapping(value = "/updateBindMall",method = RequestMethod.POST)
+    public Message updateBindMall(@RequestBody JSONObject jsonObject)
+    {
+        Mall mallOld = jsonObject.getObject("oldMall",Mall.class);
+        Mall mallNew = jsonObject.getObject("newMall",Mall.class);
+        Message message=new Message();
+        try{
+            boolean success = true;
+            success = userService.updateBindMall(mallOld,mallNew);
+            if(success = true) {
+                message.setMessage(Constant.SUCCESS, "修改成功");
+            }else message.setMessage(Constant.ERROR, "存在无效连接");
+        }catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            message.setMessage(Constant.ERROR,"修改异常");
+        }finally {
+            return message;
+        }
+    }
+
+    @RequestMapping(value = "/setBindMall",method = RequestMethod.POST)
+    public Message setBindMall(@RequestBody JSONObject jsonObject)
+    {
+        Mall mall = jsonObject.getObject("mall",Mall.class);
+        User user = jsonObject.getObject("user",User.class);
+        Message message = new Message();
+        try
+        {
+            boolean success = true;
+            success = userService.setBindMall(user,mall);
+            if(success = true) {
+                message.getData().put("user", user);
+                message.setMessage(Constant.SUCCESS, "绑定成功");
+            }else message.setMessage(Constant.ERROR, "存在无效连接或已存在商城");
+        }catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            message.setMessage(Constant.ERROR,"绑定异常");
+        }
+        finally {
+            return message;
+        }
+    }
+
+    @RequestMapping(value = "/setAddress",method = RequestMethod.POST)
+    public Message setAddress(@RequestBody JSONObject jsonObject)
+    {
+        int mallID=jsonObject.getInteger("mall");
+        User user = jsonObject.getObject("user",User.class);
+        Message message = new Message();
+        try {
+            if(jsonObject.containsKey("add"))
+            {
+                String address = jsonObject.getString("add");
+                if(userService.setAddress(address,mallID,user)!=null){
+                    message.setMessage(Constant.SUCCESS,"地址设置成功");
+                } else message.setMessage(Constant.FAILURE,"地址设置失败");
+            }else {
+                Address address = jsonObject.getObject("address",Address.class);
+                if(userService.setAddress(address,mallID,user)!=null){
+                    message.setMessage(Constant.SUCCESS,"默认地址更改成功");
+                } else message.setMessage(Constant.FAILURE,"默认地址设置失败");
+            }
+        }catch (CustomizeException e) {
+            e.printStackTrace();
+            log.error(e.getMsgDes());
+            message.setMessage(Constant.ERROR,e.getMessage());
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            message.setMessage(Constant.ERROR,"设置异常");
+        }finally {
             return message;
         }
     }

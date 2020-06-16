@@ -20,6 +20,10 @@ public class UserBindMall {
     public UserBindMall() {
     }
 
+    public UserBindMall(int userID, int mallID){
+        this.userID = userID;
+        this.mallID = mallID;
+    }
     public UserBindMall(int userID, int mallID, String userName) {
         this.userID = userID;
         this.mallID = mallID;

@@ -1,5 +1,6 @@
 package com.yhf.pointsmanage.entity;
 
+import com.yhf.pointsmanage.tools.Base64Util;
 import lombok.Data;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class User {
     private List<Mall> bindMall;
     private String phone;
     private String userType;
+    private String img;
 
     public User() {
     }

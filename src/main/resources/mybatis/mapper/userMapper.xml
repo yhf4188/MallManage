@@ -10,6 +10,7 @@
         <result column="phone" property="phone" jdbcType="VARCHAR"></result>
         <result column="password" property="password" jdbcType="VARCHAR"></result>
         <result column="user_type" property="userType" jdbcType="TINYINT"></result>
+        <result column="img" property="img" jdbcType="LONGVARCHAR"></result>
         <collection property="bindMall" ofType="com.yhf.pointsmanage.entity.Mall">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
@@ -34,11 +35,11 @@
         <collection property="address" column="id" select="com.yhf.pointsmanage.dao.AddressDao.getAddress"/>
     </resultMap>
     <sql id="user">
-        id,user_name,password,user_type,phone
+        id,user_name,password,user_type,phone,img
     </sql>
 
     <sql id="userBind">
-        id,user_name,points,user_id,bind_id,password,email,phone
+        id,user_name,points,user_id,bind_id,password,email,phone,img
     </sql>
     <!-- 登录 -->
     <select id="getUserMall" resultMap="userMapper">
@@ -81,7 +82,8 @@
         #{userName},
         #{password},
         #{userType},
-        #{phone}
+        #{phone},
+        #{img}
         )
     </insert>
 

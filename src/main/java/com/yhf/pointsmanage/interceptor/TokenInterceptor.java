@@ -24,16 +24,16 @@ public class TokenInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,Object handler)throws Exception{
-        if(request.getMethod().equals("OPTIONS")){
+        if(request.getMethod().equals("OPTIONS")){//判断是否为预检请求（preflight request）
             response.setStatus(HttpServletResponse.SC_OK);
             return true;
         }
         response.setCharacterEncoding("utf-8");
-        String token = request.getHeader("token");
+        String token = request.getHeader("token");//获取token
         if(token != null){
-            JWTVerifier verifier = JWT.require(Algorithm.HMAC256("txdy")).withIssuer("auth0").build();
+            JWTVerifier verifier = JWT.require(Algorithm.HMAC256("txdy")).withIssuer("auth0").build();//使用HMAC256解析token
             DecodedJWT jwt = verifier.verify(token);
-            boolean result = TokenUtil.verify(token)&&(valueOperations.get(jwt.getClaim("username").asString()).equals(token));
+            boolean result = TokenUtil.verify(token)&&(valueOperations.get(jwt.getClaim("username").asString()).equals(token));//判断token的正确性
             if(result){
                 return true;
             }
@@ -46,7 +46,7 @@ public class TokenInterceptor implements HandlerInterceptor {
             if(TokenUtil.verify(token))
                 json.put("code", Constant.TOKEN_NULL);
             else json.put("code", Constant.TOKEN_ERROR);
-            response.getWriter().append(json.toJSONString());
+            response.getWriter().append(json.toJSONString());//response中添加token判断结果
         }catch (Exception e){
             e.printStackTrace();
             response.sendError(500);

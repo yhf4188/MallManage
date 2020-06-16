@@ -2,7 +2,6 @@ package com.yhf.pointsmanage.dao;
 
 
 import com.yhf.pointsmanage.entity.Address;
-import org.apache.commons.math3.analysis.function.Add;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -18,6 +17,12 @@ public interface AddressDao {
 
     //更新地址
     int updateAddress(Address address);
+
+    //更新默认地址
+    int updateDefaultAddress(Address address);
+
+    //取消默认地址
+    int cancelDefaultAddress(Address address);
 
     //获取地址
     List<Address> getAddress(int user_mall_id);

@@ -12,4 +12,8 @@ public interface MallDao {
     List<Mall> getMallImpl(@Param("userName") String userName);
     Mall getMall(@Param("id") int id);
     List<Mall> getAllMall();
+    Mall getLastMall();
+    List<Mall> getSameMall(Mall mall);
+    int setMall(Mall mall);
+    int updateMall(Mall mall);
 }
