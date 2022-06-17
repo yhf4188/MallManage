@@ -72,7 +72,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.29</version>
+            <version>1.2.83</version>
         </dependency>
         <!--springboot程序测试依赖，如果是自动创建项目默认添加-->
         <dependency>
